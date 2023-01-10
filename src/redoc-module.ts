@@ -3,11 +3,11 @@ import { NestExpressApplication } from '@nestjs/platform-express';
 import { OpenAPIObject } from '@nestjs/swagger';
 import { Request, Response } from 'express';
 import expressAuth from 'express-basic-auth';
-import handlebars from 'express-handlebars';
+import { create } from 'express-handlebars';
 import pathModule from 'path';
-import { resolve } from 'url';
 import { LogoOptions, RedocDocument, RedocOptions } from './interfaces';
 import { schema } from './model/options.model';
+import { join } from 'path/posix';
 
 export class RedocModule {
   /**
@@ -88,9 +88,10 @@ export class RedocModule {
     const resolvedPath =
       finalPath.slice(-1) !== '/' ? finalPath + '/' : finalPath;
     // Serve swagger spec in another URL appended to the normalized path
-    const docUrl = resolve(resolvedPath, `${options.docName}.json`);
+    // const docUrl = resolve(resolvedPath, `${options.docName}.json`);
+    const docUrl = join(resolvedPath, `${options.docName}.json`);
     // create helper to convert metadata to JSON
-    const hbs = handlebars.create({
+    const hbs = create({
       helpers: {
         toJSON: function (object: any) {
           return JSON.stringify(object);
